@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<!-- saved from url=(0057)file:///C:/Users/USER-W/Downloads/mi_adn_corporativo.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El ADN Corporativo</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 0 20px 60px; color: #1f2937; background: #fafafa; line-height: 1.55; }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .subtitulo { color: #6b7280; margin-top: 0; }
+  h2 { font-size: 1.1rem; margin-top: 34px; padding-top: 10px; border-top: 1px solid #e5e7eb; }
+  .campos-header { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  label { display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 4px; }
+  input[type="text"] {
+    width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-size: 0.95rem; font-family: inherit; background: white;
+  }
+  textarea {
+    width: 100%; min-height: 80px; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-family: inherit; font-size: 0.95rem; resize: vertical; background: white;
+  }
+  input:focus, textarea:focus { outline: 2px solid #1d4ed8; outline-offset: 1px; }
+  .caja { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin: 14px 0; }
+  .campo-dato { margin-bottom: 12px; }
+  .campo-dato:last-child { margin-bottom: 0; }
+  .nota { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 4px; font-size: 0.9rem; margin: 14px 0; }
+  .barra-acciones {
+    position: sticky; top: 0; background: #fafafa; padding: 14px 0 10px; margin-bottom: 6px;
+    display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #e5e7eb; z-index: 10;
+  }
+  .btn { background: #1d4ed8; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .btn:hover { background: #1e40af; }
+  .btn.secundario { background: #e5e7eb; color: #1f2937; }
+  .btn.secundario:hover { background: #d1d5db; }
+  .btn.peligro { background: #fee2e2; color: #991b1b; }
+  .btn.peligro:hover { background: #fecaca; }
+  .btn-toggle {
+    background: white; color: #374151; border: 1px solid #d1d5db;
+    padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+  }
+  .btn-toggle:hover { background: #f3f4f6; }
+  #grupo-acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+  #grupo-acciones.oculto { display: none; }
+  .estado-guardado { font-size: 0.8rem; color: #16a34a; align-self: center; }
+  @media print {
+    .barra-acciones { display: none; }
+    body { margin: 0; max-width: 660px; }
+    h1, h2 { break-after: avoid; page-break-after: avoid; }
+    p, .caja, .campo-dato, textarea, .nota { break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="barra-acciones">
+  <button class="btn-toggle" id="btn-toggle-acciones" onclick="alternarAcciones()">🙈 Ocultar botones</button>
+  <span id="grupo-acciones">
+    <button class="btn" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    <button class="btn secundario" onclick="descargarTxt()">💾 Descargar respuestas (.txt)</button>
+    <button class="btn peligro" onclick="borrarTodo()">🗑️ Borrar mis respuestas</button>
+  </span>
+  <span id="estado-guardado" class="estado-guardado"></span>
+</div>
+
+<h1>El ADN Corporativo</h1>
+<p class="subtitulo">Sesión 1 — Introducción a los Negocios Electrónicos y E-business</p>
+
+<div class="campos-header">
+  <div>
+    <label for="alumno">Alumno(a)</label>
+    <input type="text" id="alumno" placeholder="Tu nombre">
+  </div>
+  <div>
+    <label for="proyecto">Proyecto / Negocio</label>
+    <input type="text" id="proyecto" placeholder="Nombre de tu proyecto">
+  </div>
+</div>
+
+<h2>Instrucciones</h2>
+<p>Elige una empresa o tienda real, familiar o hipotética sobre la que trabajarás durante todo el curso. Completa este informe ejecutivo justificando su viabilidad y propósito en el mercado, y su preparación para una transformación digital. Este documento es la base de las 7 sesiones siguientes.</p>
+
+<h2>1. Datos generales de la empresa</h2>
+<div class="caja">
+  <div class="campo-dato">
+    <label for="nombreEmpresa">Nombre de la empresa</label>
+    <input type="text" id="nombreEmpresa" placeholder="Ej: Grafiluz (Artículos Publicitarios Personalizados)">
+  </div>
+  <div class="campo-dato">
+    <label for="ubicacion">Ubicación física</label>
+    <input type="text" id="ubicacion" placeholder="Dirección, ciudad, país">
+  </div>
+  <div class="campo-dato">
+    <label for="contacto">Contacto</label>
+    <input type="text" id="contacto" placeholder="Correo y/o teléfono">
+  </div>
+  <div class="campo-dato" style="margin-bottom:0;">
+    <label for="proposito">Propósito en el mercado</label>
+    <textarea id="proposito" placeholder="¿Qué vende/ofrece? ¿Qué problema resuelve para sus clientes?"></textarea>
+  </div>
+</div>
+
+<h2>2. Informe ejecutivo y viabilidad de la transformación digital</h2>
+
+<h3 style="font-size:1rem;color:#1d4ed8;margin-bottom:4px;">2.1 Situación actual</h3>
+<p>¿Cómo opera hoy el negocio? (tradicional, redes sociales, web estática, catálogo físico, etc.)</p>
+<textarea id="situacionActual" placeholder="Describe cómo opera el negocio actualmente..."></textarea>
+
+<h3 style="font-size:1rem;color:#1d4ed8;margin-bottom:4px;margin-top:16px;">2.2 Propósito de la transformación digital</h3>
+<p>¿Qué barrera busca superar (geográfica, de tiempo de respuesta, de alcance de clientes, etc.) al pasar a un modelo de E-business / E-commerce?</p>
+<textarea id="propositoTransformacion" placeholder="Explica el propósito de la transformación digital..."></textarea>
+
+<h3 style="font-size:1rem;color:#1d4ed8;margin-bottom:4px;margin-top:16px;">2.3 Viabilidad de mercado</h3>
+<p>¿Qué tan competitivo/tradicional es el sector? ¿Qué demandan los clientes que la digitalización puede resolver?</p>
+<textarea id="viabilidadMercado" placeholder="Argumenta la viabilidad de mercado..."></textarea>
+
+<h3 style="font-size:1rem;color:#1d4ed8;margin-bottom:4px;margin-top:16px;">2.4 Viabilidad económica y operativa</h3>
+<p>¿Con qué infraestructura ya cuenta el negocio (web, redes, catálogo)? ¿Qué canales digitales de bajo costo puede aprovechar (WhatsApp Business, pasarelas de pago locales, redes sociales, nube)?</p>
+<textarea id="viabilidadEconomica" placeholder="Argumenta la viabilidad económica y operativa..."></textarea>
+
+<h2>Conclusión</h2>
+<p>En 3-5 líneas, justifica por qué este negocio es un buen candidato para una transformación digital y qué esperas lograr al final del curso.</p>
+<textarea id="conclusion" placeholder="Escribe aquí tu conclusión..."></textarea>
+
+<p class="nota"><strong>Referencia:</strong> revisa el caso resuelto de Grafiluz en <code>Sesion - 001-A-Gia-.pdf</code> (Parte 1: El ADN Corporativo) como modelo de nivel de detalle esperado.</p>
+
+<script>
+  const CLAVE_STORAGE = 'grafiluz-s1-adn-corporativo';
+  const CAMPOS = ['alumno', 'proyecto', 'nombreEmpresa', 'ubicacion', 'contacto', 'proposito', 'situacionActual', 'propositoTransformacion', 'viabilidadMercado', 'viabilidadEconomica', 'conclusion'];
+
+  let temporizador;
+  function guardarDebounced() {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(guardar, 400);
+  }
+
+  function guardar() {
+    const datos = {};
+    CAMPOS.forEach(id => datos[id] = document.getElementById(id).value);
+    localStorage.setItem(CLAVE_STORAGE, JSON.stringify(datos));
+    const estado = document.getElementById('estado-guardado');
+    estado.textContent = '✓ Guardado en este navegador';
+    clearTimeout(estado._t);
+    estado._t = setTimeout(() => estado.textContent = '', 2000);
+  }
+
+  function cargar() {
+    const guardado = localStorage.getItem(CLAVE_STORAGE);
+    if (!guardado) return;
+    const datos = JSON.parse(guardado);
+    CAMPOS.forEach(id => {
+      if (datos[id] !== undefined) document.getElementById(id).value = datos[id];
+    });
+  }
+
+  function borrarTodo() {
+    if (!confirm('¿Borrar todas tus respuestas de esta plantilla? Esta acción no se puede deshacer.')) return;
+    localStorage.removeItem(CLAVE_STORAGE);
+    CAMPOS.forEach(id => document.getElementById(id).value = '');
+  }
+
+  function descargarTxt() {
+    const v = id => document.getElementById(id).value || '(vacío)';
+    const contenido = `EL ADN CORPORATIVO
+Sesión 1 — Introducción a los Negocios Electrónicos y E-business
+
+Alumno(a): ${v('alumno')}
+Proyecto / Negocio: ${v('proyecto')}
+
+1. DATOS GENERALES DE LA EMPRESA
+Nombre de la empresa: ${v('nombreEmpresa')}
+Ubicación física: ${v('ubicacion')}
+Contacto: ${v('contacto')}
+Propósito en el mercado: ${v('proposito')}
+
+2. INFORME EJECUTIVO Y VIABILIDAD DE LA TRANSFORMACIÓN DIGITAL
+
+2.1 Situación actual
+${v('situacionActual')}
+
+2.2 Propósito de la transformación digital
+${v('propositoTransformacion')}
+
+2.3 Viabilidad de mercado
+${v('viabilidadMercado')}
+
+2.4 Viabilidad económica y operativa
+${v('viabilidadEconomica')}
+
+CONCLUSIÓN
+${v('conclusion')}
+`;
+    const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'adn-corporativo.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  CAMPOS.forEach(id => document.getElementById(id).addEventListener('input', guardarDebounced));
+
+  const CLAVE_OCULTAR_BOTONES = 'grafiluz-s1-adn-ocultar-botones';
+
+  function alternarAcciones() {
+    const grupo = document.getElementById('grupo-acciones');
+    const oculto = grupo.classList.toggle('oculto');
+    document.getElementById('btn-toggle-acciones').textContent = oculto ? '👁️ Mostrar botones' : '🙈 Ocultar botones';
+    localStorage.setItem(CLAVE_OCULTAR_BOTONES, oculto ? '1' : '0');
+  }
+
+  function cargarPreferenciaBotones() {
+    if (localStorage.getItem(CLAVE_OCULTAR_BOTONES) === '1') {
+      document.getElementById('grupo-acciones').classList.add('oculto');
+      document.getElementById('btn-toggle-acciones').textContent = '👁️ Mostrar botones';
+    }
+  }
+
+  cargar();
+  cargarPreferenciaBotones();
+</script>
+
+
+
+</body></html>
