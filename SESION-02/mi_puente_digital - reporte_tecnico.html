@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!-- saved from url=(0114)file:///D:/ENTREGABLES%20TAREA%20ING.%20SUMIRE/Codigo/Implementado-Sesion-08/Plantilla-Reporte-Puente-Digital.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Puente Digital — Reporte Técnico</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 0 20px 60px; color: #1f2937; background: #fafafa; line-height: 1.55; }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .subtitulo { color: #6b7280; margin-top: 0; }
+  h2 { font-size: 1.1rem; margin-top: 34px; padding-top: 10px; border-top: 1px solid #e5e7eb; }
+  .campos-header { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  label { display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 4px; }
+  input[type="text"], select {
+    width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-size: 0.95rem; font-family: inherit; background: white;
+  }
+  textarea {
+    width: 100%; min-height: 80px; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-family: inherit; font-size: 0.95rem; resize: vertical; background: white;
+  }
+  textarea#codigo { font-family: monospace; font-size: 0.85rem; min-height: 120px; background: #0f172a; color: #e2e8f0; }
+  input:focus, textarea:focus, select:focus { outline: 2px solid #1d4ed8; outline-offset: 1px; }
+  .caja { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin: 14px 0; }
+  .campo-servicio { margin-bottom: 12px; }
+  ol.flujo-guia { padding-left: 20px; color: #4b5563; font-size: 0.92rem; }
+  .nota { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 4px; font-size: 0.9rem; margin: 14px 0; }
+  .barra-acciones {
+    position: sticky; top: 0; background: #fafafa; padding: 14px 0 10px; margin-bottom: 6px;
+    display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #e5e7eb; z-index: 10;
+  }
+  .btn { background: #1d4ed8; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .btn:hover { background: #1e40af; }
+  .btn.secundario { background: #e5e7eb; color: #1f2937; }
+  .btn.secundario:hover { background: #d1d5db; }
+  .btn.peligro { background: #fee2e2; color: #991b1b; }
+  .btn.peligro:hover { background: #fecaca; }
+  .btn-toggle {
+    background: white; color: #374151; border: 1px solid #d1d5db;
+    padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+  }
+  .btn-toggle:hover { background: #f3f4f6; }
+  #grupo-acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+  #grupo-acciones.oculto { display: none; }
+  .estado-guardado { font-size: 0.8rem; color: #16a34a; align-self: center; }
+  #vista-previa-imagen { max-width: 100%; margin-top: 10px; border-radius: 8px; border: 1px solid #e5e7eb; display: none; }
+  input[type="file"] { font-size: 0.85rem; }
+  @media print {
+    .barra-acciones, input[type="file"] { display: none; }
+    body { margin: 0; }
+    textarea#codigo { background: #f0f0f0; color: #111; border: 1px solid #ccc; }
+    body { max-width: 660px; }
+    h1, h2 { break-after: avoid; page-break-after: avoid; }
+    p, .caja, .campo-servicio, textarea, .nota, li { break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="barra-acciones">
+  <button class="btn-toggle" id="btn-toggle-acciones" onclick="alternarAcciones()">🙈 Ocultar botones</button>
+  <span id="grupo-acciones">
+    <button class="btn" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    <button class="btn secundario" onclick="descargarTxt()">💾 Descargar respuestas (.txt)</button>
+    <button class="btn peligro" onclick="borrarTodo()">🗑️ Borrar mis respuestas</button>
+  </span>
+  <span id="estado-guardado" class="estado-guardado"></span>
+</div>
+
+<h1>El Puente Digital — Reporte Técnico</h1>
+<p class="subtitulo">Sesión 2 — E-business &amp; E-commerce</p>
+
+<div class="campos-header">
+  <div>
+    <label for="alumno">Alumno(a)</label>
+    <input type="text" id="alumno" placeholder="Tu nombre">
+  </div>
+  <div>
+    <label for="proyecto">Proyecto / Negocio</label>
+    <input type="text" id="proyecto" placeholder="Nombre de tu proyecto">
+  </div>
+</div>
+
+<h2>1. Objetivo</h2>
+<p>¿Qué problema u oportunidad de mi negocio busco resolver conectándome a un servicio externo? (Ej: mostrar precios en otra moneda, mostrar el clima para logística de entregas, traer publicaciones de redes sociales, medir cuántas personas visitan mi catálogo, etc.)</p>
+<textarea id="objetivo" placeholder="Escribe tu objetivo..."></textarea>
+
+<h2>2. API / servicio externo utilizado</h2>
+<div class="caja">
+  <div class="campo-servicio">
+    <label for="servicioNombre">Nombre del servicio</label>
+    <input type="text" id="servicioNombre" placeholder="Ej: open.er-api.com">
+  </div>
+  <div class="campo-servicio">
+    <label for="servicioUrl">URL / documentación</label>
+    <input type="text" id="servicioUrl" placeholder="https://...">
+  </div>
+  <div class="campo-servicio">
+    <label for="servicioKey">¿Requiere API key?</label>
+    <select id="servicioKey">
+      <option value="">— Selecciona —</option>
+      <option value="Sí">Sí</option>
+      <option value="No">No</option>
+    </select>
+  </div>
+  <div class="campo-servicio" style="margin-bottom:0;">
+    <label for="servicioDatos">Datos que entrega (ejemplo de respuesta)</label>
+    <textarea id="servicioDatos" placeholder="Pega aquí un ejemplo de la respuesta JSON..."></textarea>
+  </div>
+</div>
+
+<h2>3. ¿Cómo se conecta mi proyecto?</h2>
+<p>Basado en <code>Codigo/puente-digital.js</code>. El flujo general que sigue cualquier script de este tipo es:</p>
+<ol class="flujo-guia">
+  <li>Se solicita información a la API mediante <code>fetch(...)</code>.</li>
+  <li>Se procesa la respuesta (¿qué datos extraes?).</li>
+  <li>Se muestra o utiliza el resultado dentro de mi catálogo/proyecto.</li>
+</ol>
+<p>Explica, en tus palabras, cómo lo hiciste tú:</p>
+<textarea id="flujoPropio" placeholder="Explica el flujo de tu propio script..."></textarea>
+
+<h2>4. Fragmento de código relevante</h2>
+<p>Pega aquí solo la parte adaptada de tu script (no el archivo completo):</p>
+<textarea id="codigo" placeholder="// tu código aquí"></textarea>
+
+<h2>5. Resultado obtenido</h2>
+<p>Adjunta una captura de pantalla o pega el resultado (texto/consola) que demuestra que la conexión funciona.</p>
+<input type="file" id="inputImagen" accept="image/*" onchange="previsualizarImagen(event)">
+<img id="vista-previa-imagen" alt="Vista previa de la captura">
+<textarea id="resultadoTexto" placeholder="O pega aquí el resultado en texto / consola..." style="margin-top:10px;"></textarea>
+<p class="nota">La captura solo se previsualiza en esta página (no se guarda en el navegador). Recuerda adjuntarla también al entregar tu reporte final.</p>
+
+<h2>6. Aplicación al modelo de negocio</h2>
+<p>¿Cómo ayuda esta integración a la estrategia de tu negocio? ¿Qué proceso interno mejora o qué nueva oportunidad abre? (mínimo 3 líneas)</p>
+<textarea id="aplicacion" placeholder="Escribe aquí..."></textarea>
+
+<h2>7. Conclusión</h2>
+<p>En 2-3 líneas: ¿por qué esto es E-business y no simplemente E-commerce?</p>
+<textarea id="conclusion" placeholder="Escribe tu conclusión..."></textarea>
+
+<p class="nota"><strong>Nota:</strong> si no encuentras una API relevante para tu negocio, puedes optar por una alternativa de <strong>medición de tráfico</strong> (ej. un contador de visitas o clics a tu catálogo) como tu "Puente Digital" — sigue siendo un proceso de integración tecnológica de soporte al negocio.</p>
+
+<script>
+  const CLAVE_STORAGE = 'grafiluz-s2-reporte-puente-digital';
+  const CAMPOS = ['alumno', 'proyecto', 'objetivo', 'servicioNombre', 'servicioUrl', 'servicioKey', 'servicioDatos', 'flujoPropio', 'codigo', 'resultadoTexto', 'aplicacion', 'conclusion'];
+
+  function previsualizarImagen(evento) {
+    const archivo = evento.target.files[0];
+    const img = document.getElementById('vista-previa-imagen');
+    if (!archivo) { img.style.display = 'none'; return; }
+    const lector = new FileReader();
+    lector.onload = e => {
+      img.src = e.target.result;
+      img.style.display = 'block';
+    };
+    lector.readAsDataURL(archivo);
+  }
+
+  let temporizador;
+  function guardarDebounced() {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(guardar, 400);
+  }
+
+  function guardar() {
+    const datos = {};
+    CAMPOS.forEach(id => datos[id] = document.getElementById(id).value);
+    localStorage.setItem(CLAVE_STORAGE, JSON.stringify(datos));
+    const estado = document.getElementById('estado-guardado');
+    estado.textContent = '✓ Guardado en este navegador';
+    clearTimeout(estado._t);
+    estado._t = setTimeout(() => estado.textContent = '', 2000);
+  }
+
+  function cargar() {
+    const guardado = localStorage.getItem(CLAVE_STORAGE);
+    if (!guardado) return;
+    const datos = JSON.parse(guardado);
+    CAMPOS.forEach(id => {
+      if (datos[id] !== undefined) document.getElementById(id).value = datos[id];
+    });
+  }
+
+  function borrarTodo() {
+    if (!confirm('¿Borrar todas tus respuestas de esta plantilla? Esta acción no se puede deshacer.')) return;
+    localStorage.removeItem(CLAVE_STORAGE);
+    CAMPOS.forEach(id => document.getElementById(id).value = '');
+    document.getElementById('vista-previa-imagen').style.display = 'none';
+    document.getElementById('inputImagen').value = '';
+  }
+
+  function descargarTxt() {
+    const v = id => document.getElementById(id).value || '(vacío)';
+    const contenido = `EL PUENTE DIGITAL — REPORTE TÉCNICO
+Sesión 2 — E-business & E-commerce
+
+Alumno(a): ${v('alumno')}
+Proyecto / Negocio: ${v('proyecto')}
+
+1. OBJETIVO
+${v('objetivo')}
+
+2. API / SERVICIO EXTERNO UTILIZADO
+Nombre del servicio: ${v('servicioNombre')}
+URL / documentación: ${v('servicioUrl')}
+¿Requiere API key?: ${v('servicioKey')}
+Datos que entrega: ${v('servicioDatos')}
+
+3. ¿CÓMO SE CONECTA MI PROYECTO?
+${v('flujoPropio')}
+
+4. FRAGMENTO DE CÓDIGO RELEVANTE
+${v('codigo')}
+
+5. RESULTADO OBTENIDO
+${v('resultadoTexto')}
+(Recuerda adjuntar también tu captura de pantalla por separado.)
+
+6. APLICACIÓN AL MODELO DE NEGOCIO
+${v('aplicacion')}
+
+7. CONCLUSIÓN
+${v('conclusion')}
+`;
+    const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'reporte-puente-digital.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  CAMPOS.forEach(id => document.getElementById(id).addEventListener('input', guardarDebounced));
+  document.getElementById('servicioKey').addEventListener('change', guardar);
+
+  const CLAVE_OCULTAR_BOTONES = 'grafiluz-s2-reporte-ocultar-botones';
+
+  function alternarAcciones() {
+    const grupo = document.getElementById('grupo-acciones');
+    const oculto = grupo.classList.toggle('oculto');
+    document.getElementById('btn-toggle-acciones').textContent = oculto ? '👁️ Mostrar botones' : '🙈 Ocultar botones';
+    localStorage.setItem(CLAVE_OCULTAR_BOTONES, oculto ? '1' : '0');
+  }
+
+  function cargarPreferenciaBotones() {
+    if (localStorage.getItem(CLAVE_OCULTAR_BOTONES) === '1') {
+      document.getElementById('grupo-acciones').classList.add('oculto');
+      document.getElementById('btn-toggle-acciones').textContent = '👁️ Mostrar botones';
+    }
+  }
+
+  cargar();
+  cargarPreferenciaBotones();
+</script>
+
+
+
+</body></html>
