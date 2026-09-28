@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<!-- saved from url=(0119)file:///D:/ENTREGABLES%20TAREA%20ING.%20SUMIRE/ENTREGABLES/SESION-04/mi_mapa_maestro%20%E2%80%94%20Modelo%20Canvas.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Mapa Maestro — Modelo Canvas</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; color: #1f2937; background: #fafafa; line-height: 1.5; }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .subtitulo { color: #6b7280; margin-top: 0; }
+  h2 { font-size: 1.1rem; margin-top: 34px; padding-top: 10px; border-top: 1px solid #e5e7eb; }
+  .campos-header { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  label { display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 4px; }
+  input[type="text"] { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.95rem; font-family: inherit; background: white; }
+  input:focus, [contenteditable]:focus, textarea:focus { outline: 2px solid #1d4ed8; outline-offset: 1px; }
+  .nota { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 4px; font-size: 0.88rem; margin: 12px 0; }
+
+  .canvas {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .bloque {
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    min-height: 140px;
+  }
+  .bloque h3 {
+    margin: 0 0 6px;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #1d4ed8;
+  }
+  .bloque .num { color: #9ca3af; font-weight: 400; margin-right: 4px; }
+  .bloque [contenteditable] {
+    flex: 1;
+    font-size: 0.85rem;
+    outline: none;
+    white-space: pre-wrap;
+  }
+  .bloque [contenteditable]:empty::before { content: attr(data-placeholder); color: #9ca3af; }
+
+  .b-socios { grid-column: 1; grid-row: 1 / span 2; background: #f5f3ff; }
+  .b-actividades { grid-column: 2; grid-row: 1; background: #eff6ff; }
+  .b-recursos { grid-column: 2; grid-row: 2; background: #eff6ff; }
+  .b-valor { grid-column: 3; grid-row: 1 / span 2; background: #fff7ed; }
+  .b-relaciones { grid-column: 4; grid-row: 1; background: #ecfdf5; }
+  .b-canales { grid-column: 4; grid-row: 2; background: #ecfdf5; }
+  .b-segmentos { grid-column: 5; grid-row: 1 / span 2; background: #fef2f2; }
+  .b-costos { grid-column: 1 / span 2; grid-row: 3; background: #f3f4f6; min-height: 100px; }
+  .b-ingresos { grid-column: 3 / span 3; grid-row: 3; background: #f3f4f6; min-height: 100px; }
+
+  .barra-acciones { position: sticky; top: 0; background: #fafafa; padding: 14px 0 10px; margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #e5e7eb; z-index: 10; }
+  .btn { background: #1d4ed8; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .btn:hover { background: #1e40af; }
+  .btn.secundario { background: #e5e7eb; color: #1f2937; }
+  .btn.secundario:hover { background: #d1d5db; }
+  .btn.peligro { background: #fee2e2; color: #991b1b; }
+  .btn.peligro:hover { background: #fecaca; }
+  .btn-toggle { background: white; color: #374151; border: 1px solid #d1d5db; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .btn-toggle:hover { background: #f3f4f6; }
+  #grupo-acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+  #grupo-acciones.oculto { display: none; }
+  .estado-guardado { font-size: 0.8rem; color: #16a34a; align-self: center; }
+
+  @media print {
+    .barra-acciones { display: none; }
+    body { margin: 0; max-width: 100%; }
+    .canvas { grid-template-rows: 220px 220px 140px; }
+    .bloque { min-height: 0; }
+    h1, h2 { break-after: avoid; page-break-after: avoid; }
+  }
+  @media (max-width: 800px) {
+    .canvas { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    .b-socios, .b-valor, .b-segmentos, .b-costos, .b-ingresos, .b-actividades, .b-recursos, .b-relaciones, .b-canales {
+      grid-column: auto; grid-row: auto;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="barra-acciones">
+  <button class="btn-toggle" id="btn-toggle-acciones" onclick="alternarAcciones()">🙈 Ocultar botones</button>
+  <span id="grupo-acciones">
+    <button class="btn" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    <button class="btn secundario" onclick="descargarTxt()">💾 Descargar respuestas (.txt)</button>
+    <button class="btn peligro" onclick="borrarTodo()">🗑️ Borrar mis respuestas</button>
+  </span>
+  <span id="estado-guardado" class="estado-guardado"></span>
+</div>
+
+<h1>El Mapa Maestro — Modelo de Negocio Canvas</h1>
+<p class="subtitulo">Sesión 4 — Modelo de Negocio Canvas y Mercados Electrónicos</p>
+
+<div class="campos-header">
+  <div>
+    <label for="alumno">Alumno(a)</label>
+    <input type="text" id="alumno" placeholder="Tu nombre">
+  </div>
+  <div>
+    <label for="proyecto">Proyecto / Negocio</label>
+    <input type="text" id="proyecto" placeholder="Nombre de tu proyecto">
+  </div>
+</div>
+
+<p>Completa los 9 bloques con la realidad <strong>actual</strong> de tu proyecto (no la ideal ni la de un
+libro de texto). Si algo todavía no existe pero está en tu plano To-Be de la Sesión 1, indícalo entre
+paréntesis como "(planeado)".</p>
+
+<div class="canvas">
+  <div class="bloque b-socios">
+    <h3><span class="num">8</span>Socios clave</h3>
+    <div contenteditable="true" id="socios" data-placeholder="¿Proveedores, aliados o socios clave?">Distribuidores y mayoristas oficiales de marcas Xiaomi en Perú.<div><span style="font-size: 0.85rem;"><br></span></div><div><span style="font-size: 0.85rem;">Servicios de transporte y courier local en Arequipa para entregas a domicilio.</span></div><div><span style="font-size: 0.85rem;"><br></span></div><div><span style="font-size: 0.85rem;">Pasarelas de pago (Yape, Plin, Izipay/Culqi) y servicios de mensajería (WhatsApp API).</span></div></div>
+  </div>
+  <div class="bloque b-actividades">
+    <h3><span class="num">7</span>Actividades clave</h3>
+    <div contenteditable="true" id="actividades" data-placeholder="¿Qué actividades hace tu negocio para funcionar?">Mantenimiento y actualización constante del catálogo web y stock.<div><span style="font-size: 0.85rem;"><br></span></div><div><span style="font-size: 0.85rem;">Marketing digital y publicaciones locales para atracción de clientes en Arequipa.</span></div><div><span style="font-size: 0.85rem;"><br></span></div><div><span style="font-size: 0.85rem;">Gestión de pedidos, emisión de boletas/facturas y coordinación de entregas.</span></div></div>
+  </div>
+  <div class="bloque b-recursos">
+    <h3><span class="num">6</span>Recursos clave</h3>
+    <div contenteditable="true" id="recursos" data-placeholder="¿Qué recursos (físicos, digitales, humanos) necesitas?"><b data-path-to-node="36,0,0" data-index-in-node="0">Digitales:</b> Plataforma web con catálogo interactivo, base de datos de productos y pedidos.<div><b data-path-to-node="36,1,0" data-index-in-node="0" style="font-size: 0.85rem;"><br></b></div><div><b data-path-to-node="36,1,0" data-index-in-node="0" style="font-size: 0.85rem;">Físicos:</b><span style="font-size: 0.85rem;"> Inventario/stock de productos Xiaomi disponible en Arequipa.</span></div><div><b data-path-to-node="36,2,0" data-index-in-node="0" style="font-size: 0.85rem;"><br></b></div><div><b data-path-to-node="36,2,0" data-index-in-node="0" style="font-size: 0.85rem;">Humanos:</b><span style="font-size: 0.85rem;"> Personal técnico y de ventas para atención por WhatsApp y gestión de pedidos.</span></div></div>
+  </div>
+  <div class="bloque b-valor">
+    <h3><span class="num">1</span>Propuesta de valor</h3>
+    <div contenteditable="true" id="valor" data-placeholder="¿Qué problema resuelves? ¿Por qué te compran a ti y no a otro?">Venta directa de tecnología oficial Xiaomi (smartphones, wearables, ecosistema smart home) en Arequipa con entrega rápida local.<div><span style="font-size: 0.85rem;"><br></span></div><div><span style="font-size: 0.85rem;">Facilidad de compra B2C para personas naturales y opción de compra B2B con emisión de factura electrónica para RUC.</span></div><div><span style="font-size: 0.85rem;"><br></span></div><div><span style="font-size: 0.85rem;">Asistencia personalizada vía web y WhatsApp con cotizaciones instantáneas.</span></div></div>
+  </div>
+  <div class="bloque b-relaciones">
+    <h3><span class="num">4</span>Relación con clientes</h3>
+    <div contenteditable="true" id="relaciones" data-placeholder="¿Cómo tratas y fidelizas a tus clientes?">Atención rápida y personalizada pre y posventa.<div><span style="font-size: 0.85rem;"><br></span></div><div><span style="font-size: 0.85rem;">Asistencia técnica guiada en la elección de productos según necesidad y presupuesto.</span></div><div><i data-path-to-node="32,2,0" data-index-in-node="0" style="font-size: 0.85rem;"><br></i></div><div><i data-path-to-node="32,2,0" data-index-in-node="0" style="font-size: 0.85rem;">(Planeado)</i><span style="font-size: 0.85rem;"> Programa de fidelización y seguimiento automático del estado de envío por correo/WhatsApp.</span></div></div>
+  </div>
+  <div class="bloque b-canales">
+    <h3><span class="num">3</span>Canales</h3>
+    <div contenteditable="true" id="canales" data-placeholder="¿Por dónde te encuentran y te compran? (web, WhatsApp, redes...)">Catálogo web interactivo optimizado para móviles y escritorio.<div><br><div><span style="font-size: 0.85rem;">Canal de atención y cierre de ventas directo por WhatsApp Business.</span></div><div><span style="font-size: 0.85rem;"><br></span></div><div><span style="font-size: 0.85rem;">Redes sociales (Facebook, Instagram, TikTok) para atracción de tráfico local.</span></div></div></div>
+  </div>
+  <div class="bloque b-segmentos">
+    <h3><span class="num">2</span>Segmentos de clientes</h3>
+    <div contenteditable="true" id="segmentos" data-placeholder="¿Quiénes son tus clientes? (usa tu Radiografía Comercial de la Sesión 3)"><b data-path-to-node="28,0,0" data-index-in-node="0">B2C:</b> Estudiantes, jóvenes profesionales y entusiastas de la tecnología en Arequipa que buscan renovar sus dispositivos.<div><br></div><div><b data-path-to-node="28,1,0" data-index-in-node="0">B2B:</b> Pequeñas y medianas empresas o negocios locales que requieren equipamiento tecnológico (smartphones/tablets) al por mayor con factura con RUC.</div></div>
+  </div>
+  <div class="bloque b-costos">
+    <h3><span class="num">9</span>Estructura de costos</h3>
+    <div contenteditable="true" id="costos" data-placeholder="¿Cuáles son tus principales costos?">Costos de adquisición de inventario y stock de productos tecnológicos.<div><span style="font-size: 0.85rem;"><br></span></div><div><span style="font-size: 0.85rem;">Hosting, dominio y mantenimiento del entorno web.</span></div><div><span style="font-size: 0.85rem;"><br></span></div><div><span style="font-size: 0.85rem;">Gastos operativos de publicidad digital, empaquetado y logística de entrega local.</span></div></div>
+  </div>
+  <div class="bloque b-ingresos">
+    <h3><span class="num">5</span>Fuentes de ingresos</h3>
+    <div contenteditable="true" id="ingresos" data-placeholder="¿Cómo y por qué te pagan tus clientes?">Venta directa de productos tecnológicos del catálogo (pagos con tarjeta, transferencias, Yape/Plin).<div><br></div><div>Venta corporativa al por mayor (facturación a empresas).</div></div>
+  </div>
+</div>
+
+<h2>Conclusión</h2>
+<p>En 3-5 líneas: ¿qué bloque es hoy el más débil o menos definido de tu modelo, y qué harías primero para fortalecerlo?</p>
+<div class="bloque" style="min-height:80px;">
+  <div contenteditable="true" id="conclusion" data-placeholder="Escribe aquí tu conclusión...">El bloque hoy más débil es el de <b data-path-to-node="45,0" data-index-in-node="33">Canales y Automatización de Pedidos</b>, ya que la confirmación depende en gran medida de un flujo manual hacia WhatsApp. Para fortalecerlo, primero implementaré un sistema de checkout en el sitio web que registre automáticamente el pedido en la base de datos, genere la pre-factura o boleta y coordine la entrega de manera automatizada.</div>
+</div>
+
+<script>
+  const CAMPOS_TEXTO = ['socios', 'actividades', 'recursos', 'valor', 'relaciones', 'canales', 'segmentos', 'costos', 'ingresos', 'conclusion'];
+  const CLAVE_STORAGE = 'grafiluz-s4-mapa-canvas';
+
+  let temporizador;
+  function guardarDebounced() {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(guardar, 400);
+  }
+
+  function guardar() {
+    const datos = {
+      alumno: document.getElementById('alumno').value,
+      proyecto: document.getElementById('proyecto').value,
+    };
+    CAMPOS_TEXTO.forEach(id => datos[id] = document.getElementById(id).innerText);
+    localStorage.setItem(CLAVE_STORAGE, JSON.stringify(datos));
+    const estado = document.getElementById('estado-guardado');
+    estado.textContent = '✓ Guardado en este navegador';
+    clearTimeout(estado._t);
+    estado._t = setTimeout(() => estado.textContent = '', 2000);
+  }
+
+  function cargar() {
+    const guardado = localStorage.getItem(CLAVE_STORAGE);
+    if (!guardado) return;
+    const datos = JSON.parse(guardado);
+    document.getElementById('alumno').value = datos.alumno || '';
+    document.getElementById('proyecto').value = datos.proyecto || '';
+    CAMPOS_TEXTO.forEach(id => {
+      if (datos[id] !== undefined) document.getElementById(id).innerText = datos[id];
+    });
+  }
+
+  function borrarTodo() {
+    if (!confirm('¿Borrar todas tus respuestas de esta plantilla? Esta acción no se puede deshacer.')) return;
+    localStorage.removeItem(CLAVE_STORAGE);
+    document.getElementById('alumno').value = '';
+    document.getElementById('proyecto').value = '';
+    CAMPOS_TEXTO.forEach(id => document.getElementById(id).innerText = '');
+  }
+
+  function descargarTxt() {
+    const alumno = document.getElementById('alumno').value || '(sin nombre)';
+    const proyecto = document.getElementById('proyecto').value || '(sin proyecto)';
+    const v = id => document.getElementById(id).innerText || '(vacío)';
+    const contenido = `EL MAPA MAESTRO — MODELO DE NEGOCIO CANVAS
+Sesión 4 — Modelo de Negocio Canvas y Mercados Electrónicos
+
+Alumno(a): ${alumno}
+Proyecto / Negocio: ${proyecto}
+
+1. PROPUESTA DE VALOR
+${v('valor')}
+
+2. SEGMENTOS DE CLIENTES
+${v('segmentos')}
+
+3. CANALES
+${v('canales')}
+
+4. RELACIÓN CON CLIENTES
+${v('relaciones')}
+
+5. FUENTES DE INGRESOS
+${v('ingresos')}
+
+6. RECURSOS CLAVE
+${v('recursos')}
+
+7. ACTIVIDADES CLAVE
+${v('actividades')}
+
+8. SOCIOS CLAVE
+${v('socios')}
+
+9. ESTRUCTURA DE COSTOS
+${v('costos')}
+
+CONCLUSIÓN
+${v('conclusion')}
+`;
+    const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mapa-maestro-canvas.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById('alumno').addEventListener('input', guardarDebounced);
+  document.getElementById('proyecto').addEventListener('input', guardarDebounced);
+  CAMPOS_TEXTO.forEach(id => document.getElementById(id).addEventListener('input', guardarDebounced));
+
+  const CLAVE_OCULTAR_BOTONES = 'grafiluz-s4-canvas-ocultar-botones';
+
+  function alternarAcciones() {
+    const grupo = document.getElementById('grupo-acciones');
+    const oculto = grupo.classList.toggle('oculto');
+    document.getElementById('btn-toggle-acciones').textContent = oculto ? '👁️ Mostrar botones' : '🙈 Ocultar botones';
+    localStorage.setItem(CLAVE_OCULTAR_BOTONES, oculto ? '1' : '0');
+  }
+
+  function cargarPreferenciaBotones() {
+    if (localStorage.getItem(CLAVE_OCULTAR_BOTONES) === '1') {
+      document.getElementById('grupo-acciones').classList.add('oculto');
+      document.getElementById('btn-toggle-acciones').textContent = '👁️ Mostrar botones';
+    }
+  }
+
+  cargar();
+  cargarPreferenciaBotones();
+</script>
+
+
+
+</body></html>
