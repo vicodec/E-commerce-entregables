@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<!-- saved from url=(0103)file:///D:/ENTREGABLES%20TAREA%20ING.%20SUMIRE/ENTREGABLES/SESION-03/mi_radiograf%C3%ADa_comercial.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Radiografía Comercial</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 0 20px 60px; color: #1f2937; background: #fafafa; line-height: 1.55; }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .subtitulo { color: #6b7280; margin-top: 0; }
+  h2 { font-size: 1.1rem; margin-top: 34px; padding-top: 10px; border-top: 1px solid #e5e7eb; }
+  .campos-header { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  label { display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 4px; }
+  input[type="text"], select {
+    width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-size: 0.95rem; font-family: inherit; background: white;
+  }
+  input:focus, [contenteditable]:focus, textarea:focus, select:focus { outline: 2px solid #1d4ed8; outline-offset: 1px; }
+  .caja { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin: 14px 0; }
+  .opcion-modelo { display: block; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 6px; margin-bottom: 8px; cursor: pointer; }
+  .opcion-modelo:has(input:checked) { border-color: #1d4ed8; background: #eff6ff; }
+  .opcion-modelo input { margin-right: 8px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.88rem; background: white; }
+  th, td { border: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #f3f4f6; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.02em; }
+  td[contenteditable="true"] { min-width: 120px; cursor: text; }
+  td[contenteditable="true"]:empty::before { content: attr(data-placeholder); color: #9ca3af; }
+  tr.ejemplo { background: #f8fafc; color: #6b7280; font-style: italic; }
+  .badge-ejemplo { display: inline-block; background: #e0e7ff; color: #3730a3; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; margin-right: 6px; font-style: normal; }
+  textarea {
+    width: 100%; min-height: 90px; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-family: inherit; font-size: 0.95rem; resize: vertical; background: white;
+  }
+  .barra-acciones {
+    position: sticky; top: 0; background: #fafafa; padding: 14px 0 10px; margin-bottom: 6px;
+    display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #e5e7eb; z-index: 10;
+  }
+  .btn { background: #1d4ed8; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .btn:hover { background: #1e40af; }
+  .btn.secundario { background: #e5e7eb; color: #1f2937; }
+  .btn.secundario:hover { background: #d1d5db; }
+  .btn.peligro { background: #fee2e2; color: #991b1b; }
+  .btn.peligro:hover { background: #fecaca; }
+  .btn-toggle { background: white; color: #374151; border: 1px solid #d1d5db; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+  .btn-toggle:hover { background: #f3f4f6; }
+  #grupo-acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+  #grupo-acciones.oculto { display: none; }
+  .estado-guardado { font-size: 0.8rem; color: #16a34a; align-self: center; }
+  .nota { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 4px; font-size: 0.88rem; margin: 12px 0; }
+  @media print {
+    .barra-acciones { display: none; }
+    body { margin: 0; max-width: 660px; }
+    table { font-size: 0.76rem; }
+    th, td { padding: 5px 6px; }
+    h1, h2 { break-after: avoid; page-break-after: avoid; }
+    p, .caja, .nota, tr { break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="barra-acciones">
+  <button class="btn-toggle" id="btn-toggle-acciones" onclick="alternarAcciones()">🙈 Ocultar botones</button>
+  <span id="grupo-acciones">
+    <button class="btn" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    <button class="btn secundario" onclick="descargarTxt()">💾 Descargar respuestas (.txt)</button>
+    <button class="btn peligro" onclick="borrarTodo()">🗑️ Borrar mis respuestas</button>
+  </span>
+  <span id="estado-guardado" class="estado-guardado"></span>
+</div>
+
+<h1>La Radiografía Comercial</h1>
+<p class="subtitulo">Sesión 3 — Negocios y Empresas Digitales (B2B, B2C, C2C)</p>
+
+<div class="campos-header">
+  <div>
+    <label for="alumno">Alumno(a)</label>
+    <input type="text" id="alumno" placeholder="Tu nombre">
+  </div>
+  <div>
+    <label for="proyecto">Proyecto / Negocio</label>
+    <input type="text" id="proyecto" placeholder="Nombre de tu proyecto">
+  </div>
+</div>
+
+<h2>1. Modelo de negocio</h2>
+<p>Marca el modelo bajo el cual <strong>opera y cobra realmente</strong> tu tienda hoy (puedes marcar más de uno si es mixto, pero debes indicar cuál es el principal en la justificación).</p>
+<div class="caja">
+  <label class="opcion-modelo"><input type="checkbox" id="modeloB2B" onchange="guardar()"> <strong>B2B</strong> — le vendo a otras empresas (compras al por mayor, facturación con RUC, cotizaciones).</label>
+  <label class="opcion-modelo"><input type="checkbox" id="modeloB2C" onchange="guardar()"> <strong>B2C</strong> — le vendo directamente a personas naturales / consumidor final.</label>
+  <label class="opcion-modelo"><input type="checkbox" id="modeloC2C" onchange="guardar()"> <strong>C2C</strong> — mi plataforma conecta a personas que venden entre sí (yo soy el intermediario, no el vendedor).</label>
+</div>
+
+<h2>2. Evidencia del modelo (cuadro comparativo)</h2>
+<table id="tabla-evidencia">
+  <thead>
+    <tr>
+      <th style="width:20%">Criterio</th>
+      <th>Cómo se ve hoy en mi proyecto</th>
+      <th style="width:14%">¿A qué modelo apunta?</th>
+    </tr>
+  </thead>
+  <tbody id="filas-ejemplo">
+    <tr class="ejemplo">
+      <td><span class="badge-ejemplo">Ejemplo</span>¿Quién decide la compra?</td>
+      <td>Un asesor de compras corporativo pide cotización para su empresa.</td>
+      <td>B2B</td>
+    </tr>
+  </tbody>
+  <tbody id="filas-tabla"><tr>
+      <td contenteditable="true" data-placeholder="Criterio...">Tipo de comprobante</td>
+      <td contenteditable="true" data-placeholder="¿Cómo se ve en mi proyecto?">Emisión de boletas electrónicas de venta para personas naturales y facturas electrónicas para empresas/RUC</td>
+      <td contenteditable="true" data-placeholder="B2B / B2C / C2C">B2C / B2B</td>
+    </tr><tr>
+      <td contenteditable="true" data-placeholder="Criterio...">Fijación de precios y volumen</td>
+      <td contenteditable="true" data-placeholder="¿Cómo se ve en mi proyecto?">Precios unitarios fijos para el catálogo general con opción de cotizar descuentos por lote en tablets/wearables</td>
+      <td contenteditable="true" data-placeholder="B2B / B2C / C2C">B2C / B2B</td>
+    </tr><tr>
+      <td contenteditable="true" data-placeholder="Criterio...">Canal de venta e interacción</td>
+      <td contenteditable="true" data-placeholder="¿Cómo se ve en mi proyecto?">Catálogo interactivo web con pasarela/carrito de compras y atención directa vía WhatsApp.</td>
+      <td contenteditable="true" data-placeholder="B2B / B2C / C2C">B2C</td>
+    </tr><tr>
+      <td contenteditable="true" data-placeholder="Criterio...">¿Quién decide la compra?</td>
+      <td contenteditable="true" data-placeholder="¿Cómo se ve en mi proyecto?">Clientes individuales que buscan renovar su smartphone o smartwatch personal.</td>
+      <td contenteditable="true" data-placeholder="B2B / B2C / C2C">B2C</td>
+    </tr></tbody>
+</table>
+<div id="btn-agregar-fila-wrap">
+  <button class="btn secundario" onclick="agregarFila()">+ Agregar fila</button>
+</div>
+<p class="nota">Criterios sugeridos para las filas: ¿quién decide la compra?, ¿cómo se fija el precio (por unidad o por volumen)?, ¿cómo se paga (transferencia empresarial, tarjeta personal, entre usuarios)?, ¿qué tan grande es cada pedido?, ¿se emite factura o boleta?</p>
+
+<h2>3. Justificación</h2>
+<p>Explica, en 4-6 líneas, cuál es tu modelo principal, por qué, y si convive con un modelo secundario (mixto).</p>
+<textarea id="justificacion" placeholder="Escribe aquí tu justificación..."></textarea>
+
+<h2>4. Conclusión</h2>
+<p>¿Qué implica este modelo de negocio para el diseño de tu base de datos y tu plataforma? (esto conecta directamente con el Plano Maestro de la Memoria — DER)</p>
+<textarea id="conclusion" placeholder="Escribe aquí tu conclusión..."></textarea>
+
+<script>
+  const CLAVE_STORAGE = 'grafiluz-s3-radiografia-comercial';
+
+  function filaVacia(datos = {}) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td contenteditable="true" data-placeholder="Criterio...">${datos.criterio || ''}</td>
+      <td contenteditable="true" data-placeholder="¿Cómo se ve en mi proyecto?">${datos.evidencia || ''}</td>
+      <td contenteditable="true" data-placeholder="B2B / B2C / C2C">${datos.modelo || ''}</td>
+    `;
+    tr.querySelectorAll('[contenteditable]').forEach(el => el.addEventListener('input', guardarDebounced));
+    return tr;
+  }
+
+  function agregarFila(datos) {
+    document.getElementById('filas-tabla').appendChild(filaVacia(datos));
+    guardar();
+  }
+
+  let temporizador;
+  function guardarDebounced() {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(guardar, 400);
+  }
+
+  function guardar() {
+    const filas = [...document.querySelectorAll('#filas-tabla tr')].map(tr => ({
+      criterio: tr.children[0].textContent.trim(),
+      evidencia: tr.children[1].textContent.trim(),
+      modelo: tr.children[2].textContent.trim(),
+    }));
+    const datos = {
+      alumno: document.getElementById('alumno').value,
+      proyecto: document.getElementById('proyecto').value,
+      modeloB2B: document.getElementById('modeloB2B').checked,
+      modeloB2C: document.getElementById('modeloB2C').checked,
+      modeloC2C: document.getElementById('modeloC2C').checked,
+      justificacion: document.getElementById('justificacion').value,
+      conclusion: document.getElementById('conclusion').value,
+      filas,
+    };
+    localStorage.setItem(CLAVE_STORAGE, JSON.stringify(datos));
+    const estado = document.getElementById('estado-guardado');
+    estado.textContent = '✓ Guardado en este navegador';
+    clearTimeout(estado._t);
+    estado._t = setTimeout(() => estado.textContent = '', 2000);
+  }
+
+  function cargar() {
+    const guardado = localStorage.getItem(CLAVE_STORAGE);
+    document.getElementById('filas-tabla').innerHTML = '';
+    if (!guardado) {
+      for (let i = 0; i < 4; i++) agregarFila();
+      return;
+    }
+    const datos = JSON.parse(guardado);
+    document.getElementById('alumno').value = datos.alumno || '';
+    document.getElementById('proyecto').value = datos.proyecto || '';
+    document.getElementById('modeloB2B').checked = !!datos.modeloB2B;
+    document.getElementById('modeloB2C').checked = !!datos.modeloB2C;
+    document.getElementById('modeloC2C').checked = !!datos.modeloC2C;
+    document.getElementById('justificacion').value = datos.justificacion || '';
+    document.getElementById('conclusion').value = datos.conclusion || '';
+    (datos.filas || []).forEach(agregarFila);
+    if (!datos.filas || datos.filas.length === 0) {
+      for (let i = 0; i < 4; i++) agregarFila();
+    }
+  }
+
+  function borrarTodo() {
+    if (!confirm('¿Borrar todas tus respuestas de esta plantilla? Esta acción no se puede deshacer.')) return;
+    localStorage.removeItem(CLAVE_STORAGE);
+    document.getElementById('alumno').value = '';
+    document.getElementById('proyecto').value = '';
+    document.getElementById('modeloB2B').checked = false;
+    document.getElementById('modeloB2C').checked = false;
+    document.getElementById('modeloC2C').checked = false;
+    document.getElementById('justificacion').value = '';
+    document.getElementById('conclusion').value = '';
+    document.getElementById('filas-tabla').innerHTML = '';
+    for (let i = 0; i < 4; i++) agregarFila();
+  }
+
+  function descargarTxt() {
+    const alumno = document.getElementById('alumno').value || '(sin nombre)';
+    const proyecto = document.getElementById('proyecto').value || '(sin proyecto)';
+    const modelos = [];
+    if (document.getElementById('modeloB2B').checked) modelos.push('B2B');
+    if (document.getElementById('modeloB2C').checked) modelos.push('B2C');
+    if (document.getElementById('modeloC2C').checked) modelos.push('C2C');
+    const justificacion = document.getElementById('justificacion').value || '(sin justificación)';
+    const conclusion = document.getElementById('conclusion').value || '(sin conclusión)';
+    const filas = [...document.querySelectorAll('#filas-tabla tr')].map((tr, i) => {
+      const criterio = tr.children[0].textContent.trim() || '(vacío)';
+      const evidencia = tr.children[1].textContent.trim() || '(vacío)';
+      const modelo = tr.children[2].textContent.trim() || '(vacío)';
+      return `${i + 1}. ${criterio}\n   Evidencia: ${evidencia}\n   Modelo: ${modelo}`;
+    }).join('\n\n');
+
+    const contenido = `LA RADIOGRAFÍA COMERCIAL\nSesión 3 — Negocios y Empresas Digitales (B2B, B2C, C2C)\n\nAlumno(a): ${alumno}\nProyecto / Negocio: ${proyecto}\n\nMODELO(S) MARCADO(S): ${modelos.join(', ') || '(ninguno)'}\n\nEVIDENCIA\n${filas}\n\nJUSTIFICACIÓN\n${justificacion}\n\nCONCLUSIÓN\n${conclusion}\n`;
+
+    const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'radiografia-comercial.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById('alumno').addEventListener('input', guardarDebounced);
+  document.getElementById('proyecto').addEventListener('input', guardarDebounced);
+  document.getElementById('justificacion').addEventListener('input', guardarDebounced);
+  document.getElementById('conclusion').addEventListener('input', guardarDebounced);
+
+  const CLAVE_OCULTAR_BOTONES = 'grafiluz-s3-radiografia-ocultar-botones';
+
+  function alternarAcciones() {
+    const grupo = document.getElementById('grupo-acciones');
+    const oculto = grupo.classList.toggle('oculto');
+    document.getElementById('btn-toggle-acciones').textContent = oculto ? '👁️ Mostrar botones' : '🙈 Ocultar botones';
+    localStorage.setItem(CLAVE_OCULTAR_BOTONES, oculto ? '1' : '0');
+  }
+
+  function cargarPreferenciaBotones() {
+    if (localStorage.getItem(CLAVE_OCULTAR_BOTONES) === '1') {
+      document.getElementById('grupo-acciones').classList.add('oculto');
+      document.getElementById('btn-toggle-acciones').textContent = '👁️ Mostrar botones';
+    }
+  }
+
+  cargar();
+  cargarPreferenciaBotones();
+</script>
+
+
+
+</body></html>
